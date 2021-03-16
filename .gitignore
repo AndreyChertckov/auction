@@ -130,3 +130,6 @@ dmypy.json
 
 # ENV
 .env
+
+# sqlite
+*.sqlite3
