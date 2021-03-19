@@ -2,9 +2,9 @@
 Main routes of an api
 """
 
-from django.urls import path
-from rest_framework.authtoken import views as token_views
+from django.urls import path, include
+
 
 urlpatterns = [
-    path("login", token_views.obtain_auth_token),
+    path("users/", include("users.urls")),
 ]
