@@ -31,7 +31,9 @@ class Auction(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     end_time = models.DateTimeField()
-    status = models.SmallIntegerField(choices=AuctionStatus.CHOICES)
+    status = models.SmallIntegerField(
+        choices=AuctionStatus.CHOICES, default=AuctionStatus.ACTIVE
+    )
 
     start_price = models.FloatField()
     step_price = models.FloatField()

@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
-from users.serilizers import UserSerializer
+from users.serializers import UserSerializer
 
 User = get_user_model()
 
