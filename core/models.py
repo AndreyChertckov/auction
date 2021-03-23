@@ -37,3 +37,22 @@ class Auction(models.Model):
 
     start_price = models.FloatField()
     step_price = models.FloatField()
+
+
+class Bet(models.Model):
+    """
+    Model that represents a bet
+
+    Fields
+    ------
+    user:
+        that make the bet
+    auction:
+        which auction is the bet
+    price:
+        Size of the bet
+    """
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    price = models.FloatField()
