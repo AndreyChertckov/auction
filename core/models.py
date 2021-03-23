@@ -1,0 +1,58 @@
+"""
+Models for core application
+"""
+from django.db import models
+from django.conf import settings
+
+from core.constants import AuctionStatus
+
+
+class Auction(models.Model):
+    """
+    Model for auction
+
+    Fields
+    ------
+    name:
+        Name of the product
+    description:
+        Short description of the product
+    owner:
+        Owner of the auction
+    end_time:
+        Time of the end of the auction
+    status:
+        If auction is active or not
+    """
+
+    name = models.CharField(max_length=256)
+    description = models.TextField()
+
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    end_time = models.DateTimeField()
+    status = models.SmallIntegerField(
+        choices=AuctionStatus.CHOICES, default=AuctionStatus.ACTIVE
+    )
+
+    start_price = models.FloatField()
+    step_price = models.FloatField()
+
+
+class Bet(models.Model):
+    """
+    Model that represents a bet
+
+    Fields
+    ------
+    user:
+        that make the bet
+    auction:
+        which auction is the bet
+    price:
+        Size of the bet
+    """
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    price = models.FloatField()
