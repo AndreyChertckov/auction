@@ -2,19 +2,21 @@
 Sending utils
 """
 from logging import getLogger
-from typing import Iterable
 
+from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 User = get_user_model()
 
 logger = getLogger(__name__)
 
 
-def broadcast_emails(users: Iterable[User], text: str):
-    for user in users:
-        send_email(user, text)
-
-
-def send_email(user: User, text: str):
-    logger.info(f"Try to send email to {user.email} - {text}")
+def broadcast_emails(users_emails: list[str], text: str):
+    send_mail(
+        "Auction app",
+        text,
+        settings.DEFAULT_FROM_EMAIL,
+        users_emails,
+        fail_silently=False,
+    )

@@ -2,6 +2,8 @@
 Mail sending tasks are placed here
 """
 
+from logging import getLogger
+
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -12,6 +14,7 @@ from core.models import Auction, Bet
 from mail_sender.utils import broadcast_emails
 
 User = get_user_model()
+logger = getLogger(__name__)
 
 
 @celery.shared_task()
@@ -20,7 +23,7 @@ def new_auction(auction_id: int):
     Send notification for all sign up users about new auction
     """
     auction = Auction.objects.get(pk=auction_id)
-    users = User.objects.all()
+    users = list(User.objects.all().values_list("email", flat=True))
     broadcast_emails(
         users,
         f"Hi there, new auction are here! {settings.ADDRESS + reverse('get-auction', args=(auction_id,))}",
@@ -37,7 +40,9 @@ def price_of_auction_has_changed(bet_id: int):
     participance_id = auction.bet_set.exclude(user=bet.user).values_list(
         "user", flat=True
     )
-    participance = User.objects.filter(pk__in=participance_id)
+    participance = list(
+        User.objects.filter(pk__in=participance_id).values_list("email", flat=True)
+    )
 
     broadcast_emails(
         participance,
@@ -51,10 +56,17 @@ def auction_end(auction_id: int):
     Winner detection. Send notfification about end of the auction
     """
     auction = Auction.objects.get(pk=auction_id)
-    winner_bet = auction.bet_set.reverse()[0]
+    try:
+        winner_bet = auction.bet_set.reverse()[0]
+    except IndexError:
+        logger.warning(f"Nobody participated in auction {auction.name}")
+        return
+
     winner = winner_bet.user
     participance_id = auction.bet_set.values_list("user", flat=True)
-    participance = User.objects.filter(pk__in=participance_id)
+    participance = list(
+        User.objects.filter(pk__in=participance_id).values_list("email", flat=True)
+    )
 
     broadcast_emails(
         participance,
