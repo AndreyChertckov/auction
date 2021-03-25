@@ -11,6 +11,7 @@ from django.conf import settings
 import celery
 
 from core.models import Auction, Bet
+from core.constants import AuctionStatus
 from mail_sender.utils import broadcast_emails
 
 User = get_user_model()
@@ -56,6 +57,8 @@ def auction_end(auction_id: int):
     Winner detection. Send notfification about end of the auction
     """
     auction = Auction.objects.get(pk=auction_id)
+    auction.status = AuctionStatus.FINISHED
+    auction.save()
     try:
         winner_bet = auction.bet_set.reverse()[0]
     except IndexError:
