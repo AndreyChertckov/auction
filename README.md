@@ -21,7 +21,7 @@
 | `DB_NAME` | Название базы postgres |
 | `DB_USER` | Пользователь базы данных |
 | `DB_PASSWORD` | Пароль базы данных |
-| `BROKER_ADDRESS` | Адресс rabbitmq для celery |
+| `BROKER_URL` | Адресс rabbitmq для celery |
 | `EMAIL_HOST` | Аддресс smpt сервера |
 | `EMAIL_PORT` | Порт на котором запущен smpt сервер |
 | `EMAIL_HOST_USER` | Пользователь, от которого будут отправляться сообщения |
@@ -53,10 +53,18 @@ celery -A auction worker -l INFO
 
 ### Запуск с использованием docker-compose
 Для запуска с использванием `docker-compose` переменые должны быть представлены в `.env`. 
-Необходимо заменить `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` на `postgres`, `BROKER_ADDRESS` должен быть заменен на `amqp://guest:guest@rabbit:5672/auction/`
+Необходимо заменить `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` на `postgres`, `BROKER_URL` должен быть заменен на `amqp://guest:guest@rabbit:5672//`
 
 После заменны запустить 
 ```bash
 docker-compose up --build -d 
 ```
-Сервис бужет доступен на 8000 порту
+Сервис бужет доступен на `8080` порту
+
+Для созданияя суперпользователя можно воспользоваться следующей коммандой:
+```bash
+docker-compose exec app python manage.py createsuperuser
+```
+
+## Описание API
+[Swagger](https://app.swaggerhub.com/apis/wselfjes/AuctionAPI/1.0.0)
